@@ -20,3 +20,6 @@ run(main())
 ```bash
 pip install myrino -U
 ```
+
+### Documents on Rubika
+https://rubika.ir/myrino_documents 
