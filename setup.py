@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='myrino',
-    version='0.3',
+    version='1.0',
     author='amirali irvany',
     author_email='dev.metect@gmail.com',
     description='Myrino is an api-based library for Rubino messengers',
