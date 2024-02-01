@@ -6,6 +6,7 @@
 
 ```python
 from myrino import Client 
+from asyncio import run
 
 client = Client('YOUR-AUTH')
 async def main():
@@ -13,13 +14,25 @@ async def main():
     print(results)
 
 
-run(main())
+if __name__ == '__main__':
+    run(main())
+```
+### and
+```python
+from myrino import Client 
+from asyncio import run
+
+client = Client('YOUR-AUTH')
+async def main():
+    results = await client.follow('follow_id')
+    print(results)
+
+
+if __name__ == '__main__':
+    run(main())
 ```
 
 # Install
 ```bash
-pip install myrino -U
+pip install -U myrino
 ```
-
-### Documents on Rubika
-https://rubika.ir/myrino_documents 
