@@ -6,19 +6,25 @@ from random import randint
 
 class Client:
 
-    def __init__(self, auth: str, timeout: float = 20, platform: str = 'PWA') -> None:
+    def __init__(self, auth: str, timeout: float = 20, platform: str = 'PWA', lang_code: str = 'en'):
         self.auth: str = auth
         self.timeout: float = timeout
+        self.platform: str = platform
+        self.lang_code: str = lang_code
         self.session: function = session()
         self.client: dict = {
             'app_name': 'Main',
             'app_version': '3.0.1',
-            'lang_code': 'en',
             'package': 'app.rubino.main',
-            'platform': platform
+            'lang_code': self.lang_code,
+            'platform': self.platform
         }
 
-        if not auth:
+        if self.auth.lower() == 'rnd':
+            from fake import rnd
+            self.auth = rnd()
+
+        if not self.auth:
             raise ValueError('`auth` did\'t passed')
 
     def __enter__(self) -> None:
@@ -31,7 +37,7 @@ class Client:
     def url(self) -> str:
         return f'https://rubino{randint(1, 20)}.iranlms.ir/'
 
-    def exequte(self, method: str, data: dict) -> dict:
+    async def exequte(self, method: str, data: dict, r_method: str = 'post') -> dict:
         payload: dict = {
             'api_version': '0',
             'auth': self.auth,
@@ -39,37 +45,38 @@ class Client:
             'data': data,
             'method': method
         }
-        return self.session.post(self.url, timeout=self.timeout, json=payload).json()
+        with self.session.request(method=r_method, url=self.url, timeout=self.timeout, json=payload) as r:
+            return r.json()
 
 
     async def get_my_profile_info(self, profile_id: int = None) -> dict:
         payload: dict = {
             'profile_id': profile_id
         }
-        return self.exequte('getMyProfileInfo', payload)
+        return await self.exequte('getMyProfileInfo', payload)
 
 
     async def is_exist_username(self, username: str) -> dict:
         data = {
             'username': username.split('@')[-1]
         }
-        return self.exequte('isExistUsername', data)
+        return await self.exequte('isExistUsername', data)
 
 
     async def get_my_archive_stories(
             self,
-            profile_id: int = None,
             limit: int = 50,
             sort: str = 'FromMax',
-            equal: bool = False
+            equal: bool = False,
+            profile_id: int = None,
     ) -> dict:
         payload: dict = {
-            'profile_id': profile_id,
             'limit': limit,
             'sort': sort,
             'equal': equal,
+            'profile_id': profile_id,
         }
-        return self.exequte('getMyArchiveStories', payload)
+        return await self.exequte('getMyArchiveStories', payload)
 
 
     async def get_post_by_share_link(self, share_link: str, profile_id: int = None) -> None:
@@ -77,7 +84,7 @@ class Client:
             'share_link': share_link.split('/')[-1],
             'profile_id': profile_id
         }
-        return self.exequte('getPostByShareLink', payload)
+        return await self.exequte('getPostByShareLink', payload)
 
 
     async def get_profile_info(self, profile_id: int) -> dict:
@@ -85,7 +92,7 @@ class Client:
             'profile_id': None,
             'target_profile_id': profile_id
         }
-        return self.exequte('getProfileInfo', payload)
+        return await self.exequte('getProfileInfo', payload)
 
 
     async def follow(self, followee_id: int, profile_id: int = None) -> dict:
@@ -94,7 +101,7 @@ class Client:
             'followee_id': followee_id,
             'profile_id': profile_id
         }
-        return self.exequte('requestFollow', payload)
+        return await self.exequte('requestFollow', payload)
 
 
     async def un_follow(self, followee_id: int, profile_id: int = None):
@@ -103,14 +110,22 @@ class Client:
             'followee_id': followee_id,
             'profile_id': profile_id
         }
-        return self.exequte('requestFollow', payload)
+        return await self.exequte('requestFollow', payload)
 
 
     async def create_page(self, **kwargs) -> dict:
+        '''create_page(
+            bio='',
+            name='',
+            username='',
+            email='',
+            phone='',
+            website=''
+            )'''
         payload: dict = {
             **kwargs
         }
-        return self.exequte('createPage', payload)
+        return await self.exequte('createPage', payload)
 
 
     async def remove_page(self, profile_id: int, record_id: int) -> dict:
@@ -119,14 +134,25 @@ class Client:
             'record_id': record_id,
             'profile_id': profile_id
         }
-        return self.exequte('removeRecord', payload)
+        return await self.exequte('removeRecord', payload)
 
 
     async def update_profile(self, **kwargs) -> dict:
+        '''update_profile(
+            bio='',
+            name='',
+            username='',
+            email='',
+            phone='',
+            website='',
+            is_message_allowed=True or False,
+            is_mute=True or False,
+            profile_status='Public' or 'Private'
+            )'''
         payload: dict = {
             **kwargs
         }
-        return self.exequte('updateProfile', payload)
+        return await self.exequte('updateProfile', payload)
 
 
     async def add_comment(self, text: str, post_id: int, target_profile_id: int, profile_id: int = None) -> dict:
@@ -134,9 +160,10 @@ class Client:
             'content': text,
             'post_id': post_id,
             'post_profile_id': target_profile_id,
-            'rnd': randint(100000000, 999999999),
+            'rnd': randint(1, 9),
             'profile_id': profile_id
         }
+        return await self.exequte('addComment', payload)
 
 
     async def like(self, post_id: int, target_profile_id: int, profile_id: int = None) -> dict:
@@ -146,7 +173,7 @@ class Client:
             'post_profile_id': target_profile_id,
             'profile_id': profile_id
         }
-        return self.exequte('likePostAction', payload)
+        return await self.exequte('likePostAction', payload)
 
 
     async def un_like(self, post_id: int, target_profile_id: int, profile_id: int = None) -> dict:
@@ -156,7 +183,7 @@ class Client:
             'post_profile_id': target_profile_id,
             'profile_id': profile_id
         }
-        return self.exequte('likePostAction', payload)
+        return await self.exequte('likePostAction', payload)
 
 
     async def view(self, post_id: int, target_profile_id: int) -> dict:
@@ -164,7 +191,7 @@ class Client:
             'post_id': post_id,
             'post_profile_id': target_profile_id
         }
-        return self.exequte('addPostViewCount', payload)
+        return await self.exequte('addPostViewCount', payload)
 
 
     async def get_comments(
@@ -184,7 +211,7 @@ class Client:
             'limit': limit,
             'equal': equal
         }
-        return self.exequte('getComments', payload)
+        return await self.exequte('getComments', payload)
 
 
     async def get_profile_posts(
@@ -202,7 +229,7 @@ class Client:
             'sort': sort,
             'equal': equal,
         }
-        return self.exequte('getProfilePosts', payload)
+        return await self.exequte('getProfilePosts', payload)
 
 
     async def get_profiles_stories(self, target_profile_id: int, limit: int = 50) -> dict:
@@ -210,7 +237,7 @@ class Client:
             'limit': limit,
             'profile_id': target_profile_id
         }
-        return self.exequte('getProfilesStories', payload)
+        return await self.exequte('getProfilesStories', payload)
 
 
     async def get_recent_following_posts(
@@ -226,7 +253,7 @@ class Client:
             'sort': sort,
             'equal': equal,
         }
-        return self.exequte('getRecentFollowingPosts', payload)
+        return await self.exequte('getRecentFollowingPosts', payload)
 
 
     async def get_bookmarked_posts(
@@ -242,7 +269,7 @@ class Client:
             'sort': sort,
             'equal': equal
         }
-        return self.exequte('getBookmarkedPosts', payload)
+        return await self.exequte('getBookmarkedPosts', payload)
 
 
     async def get_explore_posts(
@@ -260,7 +287,7 @@ class Client:
             'equal': equal,
             'max_id': max_id,
         }
-        return self.exequte('getExplorePosts', payload)
+        return await self.exequte('getExplorePosts', payload)
 
 
     async def get_blocked_profiles(
@@ -276,7 +303,7 @@ class Client:
             'sort': sort,
             'equal': equal
         }
-        return self.exequte('getBlockedProfiles', payload)
+        return await self.exequte('getBlockedProfiles', payload)
 
 
     async def get_profile_followers(
@@ -295,7 +322,7 @@ class Client:
             'sort': sort,
             'equal': equal
         }
-        return self.exequte('getProfileFollowers', payload)
+        return await self.exequte('getProfileFollowers', payload)
 
 
     async def get_profile_followings(
@@ -314,7 +341,7 @@ class Client:
             'equal': equal,
             'f_type': 'Following',
         }
-        return self.exequte('getProfileFollowers', payload)
+        return await self.exequte('getProfileFollowers', payload)
 
 
     async def block_profile(self, blocked_id: int, profile_id: int = None) -> dict:
@@ -323,7 +350,7 @@ class Client:
             'blocked_id': blocked_id,
             'profile_id': profile_id
         }
-        return self.exequte('setBlockProfile', payload)
+        return await self.exequte('setBlockProfile', payload)
 
 
     async def un_block_profile(self, blocked_id: int, profile_id: int = None) -> dict:
@@ -332,7 +359,7 @@ class Client:
             'blocked_id': blocked_id,
             'profile_id': profile_id
         }
-        return self.exequte('setBlockProfile', payload)
+        return await self.exequte('setBlockProfile', payload)
 
 
     async def request_upload_file(
@@ -349,7 +376,7 @@ class Client:
             'file_type': file_type,
             'profile_id': profile_id
         }
-        return self.exequte('requestUploadFile', payload)
+        return await self.exequte('requestUploadFile', payload)
 
 
     async def upload_file(self, file: str, file_type: str = 'Picture', profile_id: int = None) -> dict:
@@ -390,4 +417,4 @@ class Client:
             'thumbnail_hash_file_receive': results[0]['hash_file_receive'],
             'is_multi_file': False
         }
-        return self.exequte('addPost', payload)
+        return await self.exequte('addPost', payload)
