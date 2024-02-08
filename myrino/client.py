@@ -21,7 +21,7 @@ class Client:
         }
 
         if self.auth.lower() == 'rnd':
-            from fake import rnd
+            from .fake import rnd
             self.auth = rnd()
 
         if not self.auth:
