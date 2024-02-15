@@ -7,7 +7,6 @@
 pip install -U myrino
 ```
 
-
 ## Start
 ```python
 from myrino import Client
