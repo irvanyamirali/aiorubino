@@ -2,10 +2,10 @@ from setuptools import setup, find_packages
 
 setup(
     name='myrino',
-    version='1.0',
+    version='1.1',
     author='amirali irvany',
     author_email='dev.metect@gmail.com',
-    description='Myrino is an api-based library for Rubino messengers',
+    description='myrino is an api-based library for Rubino messengers',
     long_description=open('README.md', encoding='utf-8').read(),
     long_description_content_type='text/markdown',
     url='https://github.com/metect',
