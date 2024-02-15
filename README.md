@@ -24,5 +24,5 @@ if __name__ == '__main__':
 
 
 ## Examples
-- [Go to the examples directory](https://github.com/metect/myrino/tree/main/docs)
+- [Go to the examples directory](https://github.com/metect/myrino/tree/main/examples)
 
