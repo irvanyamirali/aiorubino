@@ -6,22 +6,26 @@ from random import randint
 
 class Client:
 
-    def __init__(self, auth: str, timeout: float = 20, platform: str = 'PWA', lang_code: str = 'en'):
-        self.auth: str = auth
+    def __init__(
+            self,
+            auth: str = 'rnd',
+            timeout: float = 20,
+            platform: str = 'PWA',
+            lang_code: str = 'en'
+    ) -> None:
+        self.auth : str = auth
         self.timeout: float = timeout
-        self.platform: str = platform
-        self.lang_code: str = lang_code
         self.session: function = session()
         self.client: dict = {
             'app_name': 'Main',
             'app_version': '3.0.1',
             'package': 'app.rubino.main',
-            'lang_code': self.lang_code,
-            'platform': self.platform
+            'lang_code': lang_code,
+            'platform': platform
         }
 
-        if self.auth.lower() == 'rnd':
-            from .fake import rnd
+        if auth.lower() == 'rnd':
+            from .faker import rnd
             self.auth = rnd()
 
         if not self.auth:
@@ -50,6 +54,9 @@ class Client:
 
 
     async def get_my_profile_info(self, profile_id: int = None) -> dict:
+        '''!NOTE
+        If the value of the `profile_id` parameter is selected as `None`,
+        Robino servers will automatically select the default or main page.'''
         payload: dict = {
             'profile_id': profile_id
         }
@@ -57,10 +64,10 @@ class Client:
 
 
     async def is_exist_username(self, username: str) -> dict:
-        data = {
+        payload: dict = {
             'username': username.split('@')[-1]
         }
-        return await self.exequte('isExistUsername', data)
+        return await self.exequte('isExistUsername', payload)
 
 
     async def get_my_archive_stories(
@@ -79,10 +86,10 @@ class Client:
         return await self.exequte('getMyArchiveStories', payload)
 
 
-    async def get_post_by_share_link(self, share_link: str, profile_id: int = None) -> None:
+    async def get_post_by_share_link(self, share_link: str) -> dict:
         payload: dict = {
             'share_link': share_link.split('/')[-1],
-            'profile_id': profile_id
+            'profile_id': None
         }
         return await self.exequte('getPostByShareLink', payload)
 
@@ -104,7 +111,7 @@ class Client:
         return await self.exequte('requestFollow', payload)
 
 
-    async def un_follow(self, followee_id: int, profile_id: int = None):
+    async def un_follow(self, followee_id: int, profile_id: int = None) -> dict:
         payload: dict = {
             'f_type': 'Unfollow',
             'followee_id': followee_id,
@@ -155,7 +162,13 @@ class Client:
         return await self.exequte('updateProfile', payload)
 
 
-    async def add_comment(self, text: str, post_id: int, target_profile_id: int, profile_id: int = None) -> dict:
+    async def add_comment(
+            self,
+            text: str,
+            post_id: int,
+            target_profile_id: int,
+            profile_id: int = None
+    ) -> dict:
         payload: dict = {
             'content': text,
             'post_id': post_id,
@@ -232,10 +245,10 @@ class Client:
         return await self.exequte('getProfilePosts', payload)
 
 
-    async def get_profiles_stories(self, target_profile_id: int, limit: int = 50) -> dict:
+    async def get_profiles_stories(self, profile_id: int, limit: int = 50) -> dict:
         payload: dict = {
             'limit': limit,
-            'profile_id': target_profile_id
+            'profile_id': profile_id
         }
         return await self.exequte('getProfilesStories', payload)
 
@@ -274,14 +287,13 @@ class Client:
 
     async def get_explore_posts(
             self,
-            profile_id: int = None,
             limit: int = 50,
             sort: str = 'FromMax',
             equal: bool = False,
             max_id: str = None
     ) -> dict:
         payload: dict = {
-            'profile_id': profile_id,
+            'profile_id': None,
             'limit': limit,
             'sort': sort,
             'equal': equal,
@@ -317,10 +329,10 @@ class Client:
         payload: dict = {
             'target_profile_id': target_profile_id,
             'profile_id': profile_id,
-            'f_type': 'Follower',
             'limit': limit,
             'sort': sort,
-            'equal': equal
+            'equal': equal,
+            'f_type': 'Follower',
         }
         return await self.exequte('getProfileFollowers', payload)
 
@@ -401,13 +413,15 @@ class Client:
             file: str,
             caption: str = None,
             file_type: str = 'Picture',
+            width: int = 720,
+            height: int = 720,
             profile_id: int = None
     ) -> dict:
         results = await self.upload_file(file, file_type, profile_id)
         payload: dict = {
             'rnd': int(randint(0, 9)),
-            'width': 720,
-            'height': 720,
+            'width': width,
+            'height': height,
             'caption': caption,
             'file_id': results[1]['file_id'],
             'post_type': file_type,
