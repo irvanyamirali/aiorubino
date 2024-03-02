@@ -24,10 +24,6 @@ class Client:
             'platform': platform
         }
 
-        if auth.lower() == 'rnd':
-            from .faker import rnd
-            self.auth = rnd()
-
         if not self.auth:
             raise ValueError('`auth` did\'t passed')
 
