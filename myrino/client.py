@@ -8,7 +8,7 @@ class Client:
 
     def __init__(
             self,
-            auth: str = 'rnd',
+            auth: str,
             timeout: float = 20,
             platform: str = 'PWA',
             lang_code: str = 'en'
