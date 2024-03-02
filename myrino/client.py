@@ -8,7 +8,7 @@ class Client:
 
     def __init__(
             self,
-            auth: str = 'rnd',
+            auth: str,
             timeout: float = 20,
             platform: str = 'PWA',
             lang_code: str = 'en'
@@ -23,10 +23,6 @@ class Client:
             'lang_code': lang_code,
             'platform': platform
         }
-
-        if auth.lower() == 'rnd':
-            from .faker import rnd
-            self.auth = rnd()
 
         if not self.auth:
             raise ValueError('`auth` did\'t passed')
