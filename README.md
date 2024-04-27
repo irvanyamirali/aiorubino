@@ -7,7 +7,7 @@
 pip install -U myrino
 ```
 
-## Start
+# Start
 ```python
 from myrino import Client
 import asyncio
