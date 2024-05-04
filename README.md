@@ -12,7 +12,7 @@ pip install -U myrino
 from myrino import Client
 import asyncio
 
-client = Client('your-auth-here', 10)
+client = Client('your-auth-here')
 async def main():
     result = await client.get_my_profile_info()
     print(result)
