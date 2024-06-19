@@ -1,5 +1,5 @@
-# Myrino
-### Myrino is an api-based library for Rubino messengers
+# AIORubino
+### AIORubino is an api-based library for Rubino messengers
 
 
 # Install
@@ -9,10 +9,11 @@ pip install -U myrino
 
 # Start
 ```python
-from myrino import Client
+from aiorubino import Client
 import asyncio
 
 client = Client('your-auth-here')
+
 async def main():
     result = await client.get_my_profile_info()
     print(result)
@@ -25,4 +26,3 @@ if __name__ == '__main__':
 
 ## Examples
 - [Go to the examples directory](https://github.com/irvanyamirali/myrino/tree/main/examples)
-
