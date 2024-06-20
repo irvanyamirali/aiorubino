@@ -1,10 +1,9 @@
 # AIORubino
 ### AIORubino is an api-based library for Rubino messengers
 
-
 # Install
 ```bash
-pip install -U myrino
+pip install -U aiorubino
 ```
 
 # Start
@@ -22,7 +21,6 @@ async def main():
 if __name__ == '__main__':
     asyncio.run(main())
 ```
-
 
 ## Examples
 - [Go to the examples directory](https://github.com/irvanyamirali/myrino/tree/main/examples)
