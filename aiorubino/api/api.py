@@ -38,6 +38,7 @@ class API:
             "data": data,
             "method": name
         }
-        async with aiohttp.ClientSession(base_url=self.BASE_URL) as session:
-            async with session.request(method=method, url="/", json=payload) as responce:
-                return await responce.json()
+        for _ in range(self.client.max_retry):
+            async with aiohttp.ClientSession(base_url=self.BASE_URL) as session:
+                async with session.request(method=method, url="/", json=payload) as responce:
+                    return await responce.json()
