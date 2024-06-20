@@ -1,9 +1,10 @@
-from aiorubino.api import API
-
 from typing import Optional
 
+from aiorubino.api import API
+from aiorubino.methods import Methods
 
-class Client:
+
+class Client(Methods):
 
     def __init__(self, auth: str, max_retry: Optional[int] = 3):
         """
