@@ -1,5 +1,5 @@
 # AIORubino
-### AIORubino is an api-based library for Rubino messengers
+aiorubino is asynchronous Rubino API framework in Python
 
 # Install
 ```bash
@@ -11,7 +11,7 @@ pip install -U aiorubino
 from aiorubino import Client
 import asyncio
 
-client = Client('your-auth-here')
+client = Client("auth")
 
 async def main():
     result = await client.get_my_profile_info()
