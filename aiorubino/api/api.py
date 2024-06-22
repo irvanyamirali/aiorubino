@@ -1,3 +1,5 @@
+from aiorubino.types import Results
+
 import aiohttp
 
 from typing import Optional
@@ -19,10 +21,6 @@ class API:
         :param client: The client instance which contains auth and other configurations.
         """
         self.client = client
-        self.session = aiohttp.ClientSession(
-            base_url=self.BASE_URL, headers=self.HEADERS,
-            timeout=aiohttp.ClientTimeout(total=self.client.timeout),
-        )
 
     async def execute(self, name: str, data: Optional[dict] = None, method: Optional[str] = "POST"):
         """
@@ -43,6 +41,12 @@ class API:
             "method": name
         }
         for _ in range(self.client.max_retry):
-            async with self.session:
-                async with self.session.request(method=method, url="/", json=payload) as res:
-                    return await res.json()
+            async with aiohttp.ClientSession(base_url=self.BASE_URL) as session:
+                async with session.request(method=method, url="/", json=payload) as res:
+                    responce_data = await res.json()
+                    if responce_data.get("status") == "OK":
+                        responce_data.pop("status")
+                        return Results(responce_data)
+                    error_code = response_data.get("status_det")
+                    description = response_data.get("description")
+                    raise Exception(error_code, description)
