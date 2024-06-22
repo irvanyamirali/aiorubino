@@ -1,13 +1,14 @@
 from aiorubino.types import Results
 
-import aiohttp
-
 from typing import Optional
+from random import randint
+
+import aiohttp
 
 
 class API:
 
-    BASE_URL = "https://rubino18.iranlms.ir"
+    BASE_URL = f"https://rubino{randint(1, 19)}.iranlms.ir"
 
     HEADERS: dict = {
         "Content-Type": "application/json; charset=UTF-8",
@@ -43,10 +44,10 @@ class API:
         for _ in range(self.client.max_retry):
             async with aiohttp.ClientSession(base_url=self.BASE_URL) as session:
                 async with session.request(method=method, url="/", json=payload) as res:
-                    responce_data = await res.json()
-                    if responce_data.get("status") == "OK":
-                        responce_data.pop("status")
-                        return Results(responce_data)
+                    response_data = await res.json()
+                    if response_data.get("status") == "OK":
+                        response_data.pop("status")
+                        return Results(response_data)
                     error_code = response_data.get("status_det")
                     description = response_data.get("description")
                     raise Exception(error_code, description)
