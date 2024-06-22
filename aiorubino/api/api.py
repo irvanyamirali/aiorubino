@@ -19,6 +19,10 @@ class API:
         :param client: The client instance which contains auth and other configurations.
         """
         self.client = client
+        self.session = aiohttp.ClientSession(
+            base_url=self.BASE_URL, headers=self.HEADERS,
+            timeout=aiohttp.ClientTimeout(total=self.client.timeout),
+        )
 
     async def execute(self, name: str, data: Optional[dict] = None, method: Optional[str] = "POST"):
         """
@@ -39,6 +43,6 @@ class API:
             "method": name
         }
         for _ in range(self.client.max_retry):
-            async with aiohttp.ClientSession(base_url=self.BASE_URL, headers=self.HEADERS) as session:
-                async with session.request(method=method, url="/", json=payload) as responce:
-                    return await responce.json()
+            async with self.session:
+                async with self.session.request(method=method, url="/", json=payload) as res:
+                    return await res.json()
