@@ -1,8 +1,7 @@
-from aiorubino.types import Results
+from typing import Optional
 
 import aiorubino
-
-from typing import Optional
+from aiorubino.types import Results
 
 
 class Users:
@@ -27,3 +26,30 @@ class Users:
             "profile_id": profile_id
         }
         return await self.api.execute(name="getProfileHighlights", data=params)
+
+    async def follow(
+            self: "aiorubino.Client",
+            followee_id: str, f_type: Optional[str] = "Follow",
+            profile_id: Optional[str] = None
+    ) -> Results:
+        params: dict = {
+            "followee_id": followee_id,
+            "f_type": f_type,
+            "profile_id": profile_id
+        }
+        return await self.api.execute(name="requestFollow", data=params)
+
+    async def get_recent_following_posts(
+            self: "aiorubino.Client",
+            profile_id: Optional[str] = None,
+            limit: Optional[int] = 20,
+            sort: Optional[str] = "FromMax",
+            max_id: Optional[str] = None
+    ) -> Results:
+        params: dict = {
+            "profile_id": profile_id,
+            "limit": limit,
+            "sort": sort,
+            "max_id": max_id
+        }
+        return await self.api.execute(name="getRecentFollowingPosts", data=params)
