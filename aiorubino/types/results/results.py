@@ -207,3 +207,7 @@ class Results:
     @property
     def is_top_store(self):
         return self.profile.find_keys("is_top_store")
+
+    @property
+    def has_profile_link_item(self):
+        return self.data.find_keys("has_profile_link_item")
