@@ -8,7 +8,8 @@ class Follow:
 
     async def follow(
             self: "aiorubino.Client",
-            followee_id: str, f_type: Optional[str] = "Follow",
+            followee_id: str,
+            f_type: Optional[str] = "Follow",
             profile_id: Optional[str] = None
     ) -> Results:
         params: dict = {
