@@ -1,5 +1,7 @@
 from typing import Optional
 
+import asyncio
+
 from aiorubino.api import API
 from aiorubino.methods import Methods
 
@@ -18,3 +20,7 @@ class Client(Methods):
         self.timeout = timeout
         self.max_retry = max_retry
         self.api = API(client=self)
+
+    @staticmethod
+    def run(function):
+        asyncio.run(function)
