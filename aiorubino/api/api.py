@@ -27,7 +27,7 @@ class API:
         """
         Execute a command on the Rubino API
         """
-        payload = {
+        payload: dict = {
             "auth": self.client.auth,
             "api_version": "0",
             "client": {
@@ -41,8 +41,9 @@ class API:
             "data": data,
             "method": name
         }
+        timeout = aiohttp.ClientTimeout(total=self.client.timeout)
         for _ in range(self.client.max_retry):
-            async with aiohttp.ClientSession(base_url=self.BASE_URL) as session:
+            async with aiohttp.ClientSession(base_url=self.BASE_URL, timeout=timeout) as session:
                 async with session.request(method=method, url="/", json=payload) as res:
                     response_data = await res.json()
                     if response_data.get("status") == "OK":
