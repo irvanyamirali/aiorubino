@@ -68,7 +68,7 @@ class Results:
     @property
     def to_dict(self) -> dict:
         """
-        Return the update as dict
+        Return the data as dict
         """
         return self.original_update
 
